@@ -1,61 +1,64 @@
-#include"mergesort.h"
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
-void merge(int arr[], int left, int middle, int right){
-    int i, j, k;
-    int CountLeftArry = middle - left + 1;
-    int CountRightArry =  right - middle;
+#include "mergesort.h"
 
-    int TmpArrLeft[CountLeftArry], TmpArrRight[CountRightArry];
- 
-    for (i = 0; i < CountLeftArry; i++)
-        TmpArrLeft[i] = arr[left + i];
-    for (j = 0; j < CountRightArry; j++)
-        TmpArrRight[j] = arr[middle + 1+ j];
- 
-    i = 0, j = 0;
-    k = left;
-    while (i < CountLeftArry && j < CountRightArry){
-        if (TmpArrLeft[i] <= TmpArrRight[j]){
-            arr[k] = TmpArrLeft[i];
-            i++;
-        }
-        else{
-            arr[k] = TmpArrRight[j];
-            j++;
-        }
-        k++;
-    }
- 
-    while (i < CountLeftArry){
-        arr[k] = TmpArrLeft[i];
-        i++;
-        k++;
-    }
- 
-    while (j < CountRightArry){
-        arr[k] = TmpArrRight[j];
-        j++;
-        k++;
-    }
-}
+void merge(int aray[], int start, int mid, int end){	
+	int arr_size= end - start;
+	int* extra_aray;
+	extra_aray = (int*) calloc(arr_size+1,sizeof(int));
+	
+	int first, second;
+	first = start;
+	second = mid;
+	int copy = 0;
 
-void mergeSort(int ArrToSort[], int left, int right){
-	if (left < right){
-	    int middle = left+(right-left)/2;
-
-        //Splits into two sizes.
-		mergeSort(ArrToSort, left, middle);
-		mergeSort(ArrToSort, middle+1, right);
-
-		merge(ArrToSort, left, middle, right);
+	while(first < mid && second < end) {
+		if(aray[first] < aray[second]){
+			extra_aray[copy] = aray[first];
+			++first;
+		} else {
+			extra_aray[copy] = aray[second];
+			++second;
+		}
+		++copy;
 	}
-}
 
-void printArray(int A[], int size){
+	while(first < mid){
+		extra_aray[copy] = aray[first];
+		++copy;
+		++first;
+	}
+	
+	while(second < end){
+		extra_aray[copy] = aray[second];
+		++copy;
+		++second;
+	}
+	extra_aray[arr_size]='\0';
+
 	int i;
-	for (i=0; i < size; i++)
-		printf("%d ", A[i]);
-	printf("\n");
+	for(i = 0; i < arr_size; ++i){
+		aray[i + start] = extra_aray[i];
+	}
+	
+	free(extra_aray);
+}
+		
+void sort(int aray[], int start, int end){
+	int size = end - start;
+	if(size >= 2){
+		int mid;
+	        mid = (start + end) / 2;
+		sort(aray, start, mid);
+		sort(aray, mid, end);
+		merge(aray, start, mid, end);	
+	} 
 }
 
+void mergesort(int size, int values[]){
+	int start = 0;
+	int end = size;
+	sort(values, start, end);
+}
